@@ -1,0 +1,36 @@
+<f:render partial="Form" arguments="{_all}" />
+
+<f:if condition="{news}">
+	<f:then>
+		<f:for each="{news}" as="newsItem">
+
+			<div style="border:1px solid lightcoral;margin:5px;padding:5px;">
+				<h3>{newsItem.title} ({newsItem.uid})</h3>
+
+				<f:if condition="{newsItem.locations}">
+					<div style="border: 1px solid lightblue;margin:5px;padding:5px">
+						<h4>Locations</h4>
+						<ul>
+							<f:for each="{newsItem.locations}" as="location">
+								<li>{location.title}</li>
+							</f:for>
+						</ul>
+					</div>
+				</f:if>
+
+				<f:if condition="{newsItem.eventtypes}">
+					<div style="border: 1px solid lightgreen;margin:5px;padding:5px">
+						<h4>Event types</h4>
+						<ul>
+							<f:for each="{newsItem.eventtypes}" as="eventtype">
+								<li>{eventtype.title}</li>
+							</f:for>
+						</ul>
+					</div>
+				</f:if>
+			</div>
+			</p>
+		</f:for>
+	</f:then>
+	<f:else>no news</f:else>
+</f:if>
