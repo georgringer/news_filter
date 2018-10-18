@@ -31,7 +31,7 @@ class Search extends AbstractEntity
     /**
      * @param string $fromDate
      */
-    public function setFromDate(string $fromDate): void
+    public function setFromDate(string $fromDate)
     {
         $this->fromDate = $fromDate;
     }
@@ -47,7 +47,7 @@ class Search extends AbstractEntity
     /**
      * @param string $toDate
      */
-    public function setToDate(string $toDate): void
+    public function setToDate(string $toDate)
     {
         $this->toDate = $toDate;
     }
@@ -63,7 +63,7 @@ class Search extends AbstractEntity
     /**
      * @param array $filteredTags
      */
-    public function setFilteredTags(array $filteredTags): void
+    public function setFilteredTags(array $filteredTags)
     {
         $this->filteredTags = $filteredTags;
     }
@@ -79,7 +79,7 @@ class Search extends AbstractEntity
     /**
      * @param array $filteredCategories
      */
-    public function setFilteredCategories(array $filteredCategories): void
+    public function setFilteredCategories(array $filteredCategories)
     {
         $this->filteredCategories = $filteredCategories;
     }

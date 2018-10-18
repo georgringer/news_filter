@@ -30,7 +30,7 @@ class Demand extends NewsDemand
     /**
      * @param string $fromDate
      */
-    public function setFromDate(string $fromDate): void
+    public function setFromDate(string $fromDate)
     {
         $this->fromDate = $fromDate;
     }
@@ -46,7 +46,7 @@ class Demand extends NewsDemand
     /**
      * @param string $toDate
      */
-    public function setToDate(string $toDate): void
+    public function setToDate(string $toDate)
     {
         $this->toDate = $toDate;
     }
@@ -62,7 +62,7 @@ class Demand extends NewsDemand
     /**
      * @param array $filteredTags
      */
-    public function setFilteredTags(array $filteredTags): void
+    public function setFilteredTags(array $filteredTags)
     {
         $this->filteredTags = $filteredTags;
     }
@@ -78,7 +78,7 @@ class Demand extends NewsDemand
     /**
      * @param array $filteredCategories
      */
-    public function setFilteredCategories(array $filteredCategories): void
+    public function setFilteredCategories(array $filteredCategories)
     {
         $this->filteredCategories = $filteredCategories;
     }

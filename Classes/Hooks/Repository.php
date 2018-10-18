@@ -15,7 +15,7 @@ class Repository
             return;
         }
 
-        $this->updateConstraints($params['demand'], $params['respectEnableFields'], $params['query'], $params['constraints']);
+        $this->updateConstraints($params['demand'], $params['query'], $params['constraints']);
     }
 
     /**
@@ -24,8 +24,45 @@ class Repository
      * @param QueryInterface $query
      * @param array $constraints
      */
-    protected function updateConstraints(Demand $demand, $respectEnableFields, QueryInterface $query, array &$constraints)
+    protected function updateConstraints(Demand $demand, QueryInterface $query, array &$constraints)
     {
+        // dates
+        $dateField = 'datetime';
+        $dateFrom = $demand->getFromDate();
+        if ($dateFrom) {
+            $date = strtotime($dateFrom);
+            if ($date) {
+                $constraints[] = $query->greaterThanOrEqual($dateField, $date);
+            }
+        }
+        $dateTo = $demand->getToDate();
+        if ($dateTo) {
+            $date = strtotime($dateTo);
+            if ($date) {
+                $date += 86400;
+                $constraints[] = $query->lessThanOrEqual($dateField, $date);
+            }
+        }
+
+        // categories
+        $categories = $demand->getFilteredCategories();
+        if (!empty($categories)) {
+            $categoryConstraint = [];
+            foreach ($categories as $category) {
+                $categoryConstraint[] = $query->contains('categories', $category);
+            }
+            $constraints['filteredCategories'] = $query->logicalOr($categoryConstraint);
+        }
+
+        // tags
+        $tags = $demand->getFilteredTags();
+        if (!empty($tags)) {
+            $tagConstraint = [];
+            foreach ($tags as $tag) {
+                $tagConstraint[] = $query->contains('tags', $tag);
+            }
+            $constraints['filteredTags'] = $query->logicalOr($tagConstraint);
+        }
 
     }
 }

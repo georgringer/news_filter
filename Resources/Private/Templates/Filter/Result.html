@@ -6,24 +6,25 @@
 
 			<div style="border:1px solid lightcoral;margin:5px;padding:5px;">
 				<h3>{newsItem.title} ({newsItem.uid})</h3>
+				<f:format.date format="d.m.Y">{newsItem.datetime}</f:format.date>
 
-				<f:if condition="{newsItem.locations}">
+				<f:if condition="{newsItem.categories}">
 					<div style="border: 1px solid lightblue;margin:5px;padding:5px">
-						<h4>Locations</h4>
+						<h4>Categories</h4>
 						<ul>
-							<f:for each="{newsItem.locations}" as="location">
-								<li>{location.title}</li>
+							<f:for each="{newsItem.categories}" as="category">
+								<li>{category.title}</li>
 							</f:for>
 						</ul>
 					</div>
 				</f:if>
 
-				<f:if condition="{newsItem.eventtypes}">
+				<f:if condition="{newsItem.tags}">
 					<div style="border: 1px solid lightgreen;margin:5px;padding:5px">
-						<h4>Event types</h4>
+						<h4>Tags</h4>
 						<ul>
-							<f:for each="{newsItem.eventtypes}" as="eventtype">
-								<li>{eventtype.title}</li>
+							<f:for each="{newsItem.tags}" as="tag">
+								<li>{tag.title}</li>
 							</f:for>
 						</ul>
 					</div>
