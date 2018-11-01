@@ -13,6 +13,5 @@ if (!defined('TYPO3_MODE')) {
     ]
 );
 
-
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['news']['Domain/Repository/AbstractDemandedRepository.php']['findDemanded'][$_EXTKEY]
     = \GeorgRinger\NewsFilter\Hooks\Repository::class . '->modify';

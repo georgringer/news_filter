@@ -1,0 +1,33 @@
+{
+  "name": "georgringer/news-filter",
+  "keywords": [
+    "TYPO3",
+    "extension",
+    "news",
+    "filter"
+  ],
+  "authors": [
+    {
+      "name": "Georg Ringer",
+      "role": "Developer",
+      "homepage": "https://ringer.it"
+    }
+  ],
+  "type": "typo3-cms-extension",
+  "description": "Filter news by date, categories and tags",
+  "homepage": "https://ringer.it",
+  "license": ["GPL-2.0-or-later"],
+  "require": {
+    "typo3/cms-core": "^8.7 || ^9.5",
+    "georgringer/news": "^6.3|| ^7"
+  },
+  "autoload": {
+    "psr-4": {
+      "GeorgRinger\\NewsFilter\\": "Classes"
+    }
+  },
+  "replace": {
+    "news_filter": "self.version",
+    "typo3-ter/news-filter": "self.version"
+  }
+}

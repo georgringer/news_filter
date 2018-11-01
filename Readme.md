@@ -2,10 +2,11 @@
 
 This extension makes it possible to filter news in the frontend by the following properties:
 
-- date from
-- date to
+- date from & to
 - categories
 - tags
+
+This extension has been sponsored by [University Basel](https://www.unibas.ch)
 
 ## Requirements
 
@@ -14,4 +15,6 @@ This extension makes it possible to filter news in the frontend by the following
 
 ## Usage
 
-Install the extension just as any other extension.
+- Install the extension just as any other extension. Either use the Extension Manager or composer and `composer require georgringer/news-filter`.
+- Create a new plugin and choose *Advanced news filter*
+- Select page of categories & tags and you are done.

@@ -6,7 +6,7 @@ if (!defined('TYPO3_MODE')) {
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
     'news_filter',
     'Filter',
-    'Advanvced news filter'
+    'Advanced news filter'
 );
 $extensionName = strtolower(\TYPO3\CMS\Core\Utility\GeneralUtility::underscoredToUpperCamelCase('news_filter'));
 $pluginSignature = $extensionName . '_filter';
