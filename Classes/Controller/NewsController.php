@@ -14,7 +14,7 @@ class NewsController extends \GeorgRinger\News\Controller\NewsController
         if (null === $search) {
             $search = $this->objectManager->get(\GeorgRinger\NewsFilter\Domain\Model\Dto\Search::class);
         } else {
-            $demand = $this->objectManager->get(\GeorgRinger\NewsFilter\Domain\Model\Dto\Demand::class);
+            $demand = $this->createDemandObjectFromSettings($this->settings, \GeorgRinger\NewsFilter\Domain\Model\Dto\Demand::class);
             $demand->setStoragePage(\GeorgRinger\News\Utility\Page::extendPidListByChildren($this->settings['startingpoint']));
             $demand->setCategories(explode(',', $this->settings['categories']));
 
