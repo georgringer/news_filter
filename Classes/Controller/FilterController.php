@@ -9,6 +9,7 @@ use GeorgRinger\NewsFilter\Domain\Model\Dto\Demand;
 use GeorgRinger\NewsFilter\Domain\Model\Dto\Search;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FilterController extends NewsController
@@ -71,20 +72,27 @@ class FilterController extends NewsController
 
     protected function getAllRecordsByPid(string $tableName, string $pidList): array
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-        $rows = $queryBuilder
-            ->select('uid')
-            ->from($tableName)
-            ->where(
-                $queryBuilder->expr()->in(
-                    'pid',
-                    $queryBuilder->createNamedParameter(explode(',', $pidList), Connection::PARAM_INT_ARRAY)
-                )
-            )
-            ->execute()
-            ->fetchAll();
-
         $list = [];
+        if (class_exists(ConnectionPool::class)) {
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
+            $rows = $queryBuilder
+                ->select('uid')
+                ->from($tableName)
+                ->where(
+                    $queryBuilder->expr()->in(
+                        'pid',
+                        $queryBuilder->createNamedParameter(explode(',', $pidList), Connection::PARAM_INT_ARRAY)
+                    )
+                )
+                ->execute()
+                ->fetchAll();
+        } else {
+            /** @var DatabaseConnection $db */
+            $db = $GLOBALS['TYPO3_DB'];
+            $where = 'pid IN(' . $db->cleanIntList($pidList) . ')';
+            $rows = $db->exec_SELECTgetRows('uid', $tableName, $where);
+        }
+
         foreach ($rows as $row) {
             $list[] = $row['uid'];
         }
