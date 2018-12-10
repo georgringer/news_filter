@@ -68,7 +68,7 @@ class NewsControllerSlot
                 $extended['tags'] = $tagRepository->findByIdList($tags2);
             }
         }
-        
+
         $data = [
             'news' => $newsItems,
             'overwriteDemand' => $overwriteDemand,
