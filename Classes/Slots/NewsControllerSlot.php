@@ -59,7 +59,7 @@ class NewsControllerSlot
             $categories2 = $this->getAllRecordsByPid('sys_category', $settings['filterCategories']);
             if (!empty($categories2)) {
                 $categoryRepository = $this->objectManager->get(CategoryRepository::class);
-                $extended['categories'] = $categoryRepository->findByIdList($categories2);
+                $extended['categories'] = $categoryRepository->findByIdListWithLanguageSupport($categories2);
             }
 
             $tags2 = $this->getAllRecordsByPid('tx_news_domain_model_tag', $settings['filterTags']);
