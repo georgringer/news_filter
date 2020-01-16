@@ -35,7 +35,7 @@ class FlexFormHook
             $file = PATH_site . self::PATH;
             $content = file_get_contents($file);
             if ($content) {
-                $dataStructure['sheets']['extraEntry'] = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($content);
+                $dataStructure['sheets']['news_filter'] = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($content);
             }
         }
         return $dataStructure;
