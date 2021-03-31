@@ -27,7 +27,6 @@
     }
   },
   "replace": {
-    "news_filter": "self.version",
     "typo3-ter/news-filter": "self.version"
   },
   "extra": {
