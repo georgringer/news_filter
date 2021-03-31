@@ -11,13 +11,10 @@ use GeorgRinger\News\Domain\Repository\NewsRepository;
 use GeorgRinger\News\Domain\Repository\TagRepository;
 use GeorgRinger\News\Event\NewsListActionEvent;
 use GeorgRinger\News\Utility\Page;
-use GeorgRinger\NumberedPagination\NumberedPagination;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extbase\Pagination\QueryResultPaginator;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 
 class NewsListActionEventListener
@@ -38,14 +35,15 @@ class NewsListActionEventListener
         if ($settings['enableFilter']) {
             $search = $this->objectManager->get(Search::class);
 
-            $getVars  = GeneralUtility::_GET('tx_news_pi1');
-            $postVars = GeneralUtility::_POST('tx_news_pi1');
-
-            if (isset($postVars['search']) && is_array($postVars['search'])) {
+            $vars = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('tx_news_pi1');
+            if (isset($vars['search']) && is_array($vars['search'])) {
                 /** @var Search $search */
-                $search = $this->objectManager->get(PropertyMapper::class)->convert($postVars['search'], Search::class);
+                $search = $this->objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
 
                 $demand = $this->createDemandObjectFromSettings($settings, Demand::class);
+                $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint']));
+                $demand->setCategories(explode(',', $settings['categories']));
+
                 $demand->setFilteredCategories($search->getFilteredCategories());
                 $demand->setFilteredTags($search->getFilteredTags());
                 $demand->setFromDate($search->getFromDate());
@@ -56,28 +54,6 @@ class NewsListActionEventListener
 
                 $data['demand'] = $demand;
                 $data['news']  = $newsItems;
-
-                // pagination
-                $paginationConfiguration = $settings['list']['paginate'] ?? [];
-                $itemsPerPage = (int)($paginationConfiguration['itemsPerPage'] ?: 10);
-                $maximumNumberOfLinks = (int)($paginationConfiguration['maximumNumberOfLinks'] ?? 0);
-
-                $currentPage = (int)($getVars['currentPage'] ?? 1);
-                $paginator = GeneralUtility::makeInstance(QueryResultPaginator::class, $newsItems, $currentPage, $itemsPerPage);
-                $paginationClass = $paginationConfiguration['class'] ?? SimplePagination::class;
-                if ($paginationClass === NumberedPagination::class && $maximumNumberOfLinks && class_exists(NumberedPagination::class)) {
-                    $pagination = GeneralUtility::makeInstance(NumberedPagination::class, $paginator, $maximumNumberOfLinks);
-                } elseif (class_exists($paginationClass)) {
-                    $pagination = GeneralUtility::makeInstance($paginationClass, $paginator);
-                } else {
-                    $pagination = GeneralUtility::makeInstance(SimplePagination::class, $paginator);
-                }
-
-                $data['pagination'] = [
-                    'currentPage' => $currentPage,
-                    'paginator'   => $paginator,
-                    'pagination'  => $pagination,
-                ];
             }
 
             $extended = [
@@ -159,7 +135,7 @@ class NewsListActionEventListener
         $demand->setTimeRestrictionHigh($settings['timeRestrictionHigh']);
         $demand->setArchiveRestriction($settings['archiveRestriction']);
         $demand->setExcludeAlreadyDisplayedNews((bool)$settings['excludeAlreadyDisplayedNews']);
-        $demand->setHideIdList((string)$settings['hideIdList'] ?? '');
+        $demand->setHideIdList((string)($settings['hideIdList'] ?? ''));
 
         if ($settings['orderBy']) {
             $demand->setOrder($settings['orderBy'] . ' ' . $settings['orderDirection']);
@@ -176,8 +152,8 @@ class NewsListActionEventListener
         $demand->setMonth((int)$settings['month']);
         $demand->setYear((int)$settings['year']);
 
-        $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint'], $settings['recursive']));
-
+        $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint'],
+            $settings['recursive']));
         return $demand;
     }
 }
