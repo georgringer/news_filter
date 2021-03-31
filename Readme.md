@@ -27,6 +27,10 @@ Add the following part to your `List.html`:
 	<f:form action="list" object="{extendedVariables.searchDemand}" name="search" class="form-horizontal">
 		<fieldset>
 			<div class="form-group">
+				<label for="news-subject"><f:translate key="search-subject" /></label>
+				<f:form.textfield id="news-subject" property="subject" class="form-control"/>
+			</div>
+			<div class="form-group">
 				<f:for each="{extendedVariables.categories}" as="category">
 					<div class="checkbox">
 						<label>

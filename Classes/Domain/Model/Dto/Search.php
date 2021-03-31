@@ -2,10 +2,9 @@
 
 namespace GeorgRinger\NewsFilter\Domain\Model\Dto;
 
+use GeorgRinger\News\Domain\Model\Dto\Search as NewsSearch;
 
-use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-
-class Search extends AbstractEntity
+class Search extends NewsSearch
 {
 
     /** @var string */
