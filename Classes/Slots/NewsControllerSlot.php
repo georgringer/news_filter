@@ -58,14 +58,28 @@ class NewsControllerSlot
 
             $categories2 = $this->getAllRecordsByPid('sys_category', $settings['filterCategories']);
             if (!empty($categories2)) {
+                if (isset($settings['filterCategoriesOrderBy'])) {
+                    $categories2order = [
+                        $settings['filterCategoriesOrderBy'] => strtoupper($settings['filterCategoriesOrderDirection'] ?? 'ASC'),
+                    ];
+                } else {
+                    $categories2order = [];
+                }
                 $categoryRepository = $this->objectManager->get(CategoryRepository::class);
-                $extended['categories'] = $categoryRepository->findByIdListWithLanguageSupport($categories2);
+                $extended['categories'] = $categoryRepository->findByIdListWithLanguageSupport($categories2, $categories2order);
             }
 
             $tags2 = $this->getAllRecordsByPid('tx_news_domain_model_tag', $settings['filterTags']);
             if (!empty($tags2)) {
+                if (isset($settings['filterTagsOrderBy'])) {
+                    $tags2order = [
+                        $settings['filterTagsOrderBy'] => strtoupper($settings['filterTagsOrderDirection'] ?? 'ASC'),
+                    ];
+                } else {
+                    $tags2order = [];
+                }
                 $tagRepository = $this->objectManager->get(TagRepository::class);
-                $extended['tags'] = $tagRepository->findByIdList($tags2);
+                $extended['tags'] = $tagRepository->findByIdList($tags2, $tags2order);
             }
         }
 

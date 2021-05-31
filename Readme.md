@@ -65,3 +65,16 @@ Add the following part to your `List.html`:
 	</f:form>
 ```
 
+### Order categories and tags
+
+```typoscript
+plugin.tx_news {
+	settings {
+		filterCategoriesOrderBy = title
+		filterCategoriesOrderDirection = asc
+
+		filterTagsOrderBy = title
+		filterTagsOrderDirection = asc
+	}
+}
+```
