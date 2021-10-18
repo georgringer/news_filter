@@ -18,7 +18,7 @@
   "homepage": "https://ringer.it",
   "license": ["GPL-2.0-or-later"],
   "require": {
-    "typo3/cms-core": "^8.7 || ^9.5",
+    "typo3/cms-core": "^8.7 || ^9.5 || ^10.4",
     "georgringer/news": "^6.3 || ^7 || ^8"
   },
   "autoload": {
