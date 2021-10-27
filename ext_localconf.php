@@ -8,7 +8,7 @@ $GLOBALS['TYPO3_CONF_VARS']['EXT']['news']['Domain/Repository/AbstractDemandedRe
 
 $vars = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('tx_news_pi1');
 if (isset($vars['search']) && is_array($vars['search'])) {
-    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions']['News']['plugins']['Pi1']['controllers']['News']['nonCacheableActions'][] = 'list';
+    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions']['News']['plugins']['Pi1']['controllers'][\GeorgRinger\News\Controller\NewsController::class]['nonCacheableActions'][] = 'list';
 }
 
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['news']['classes']['Domain/Repository/CategoryRepository'][] = 'news_filter';
