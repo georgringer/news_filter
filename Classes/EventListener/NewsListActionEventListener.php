@@ -1,34 +1,36 @@
 <?php
 
-namespace GeorgRinger\NewsFilter\Slots;
+declare(strict_types=1);
 
+namespace GeorgRinger\NewsFilter\EventListener;
 
+use GeorgRinger\NewsFilter\Domain\Model\Dto\Demand;
+use GeorgRinger\NewsFilter\Domain\Model\Dto\Search;
 use GeorgRinger\News\Domain\Repository\CategoryRepository;
 use GeorgRinger\News\Domain\Repository\NewsRepository;
 use GeorgRinger\News\Domain\Repository\TagRepository;
+use GeorgRinger\News\Event\NewsListActionEvent;
 use GeorgRinger\News\Utility\Page;
-use GeorgRinger\NewsFilter\Domain\Model\Dto\Demand;
-use GeorgRinger\NewsFilter\Domain\Model\Dto\Search;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 
-class NewsControllerSlot
+class NewsListActionEventListener
 {
-
     /** @var ObjectManager */
     protected $objectManager;
 
     public function __construct()
     {
         $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
     }
 
-    public function listActionSlot($newsItems, $overwriteDemand, $demand,
-                                   $categories, $tags, $settings)
+    public function __invoke(NewsListActionEvent $event)
     {
+        $data     = $event->getAssignedValues();
+        $settings = $data['settings'];
 
         if ($settings['enableFilter']) {
             $search = $this->objectManager->get(Search::class);
@@ -39,7 +41,7 @@ class NewsControllerSlot
                 $search = $this->objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
 
                 $demand = $this->createDemandObjectFromSettings($settings, Demand::class);
-                $demand->setStoragePage(\GeorgRinger\News\Utility\Page::extendPidListByChildren($settings['startingpoint']));
+                $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint']));
                 $demand->setCategories(explode(',', $settings['categories']));
 
                 $demand->setFilteredCategories($search->getFilteredCategories());
@@ -49,6 +51,9 @@ class NewsControllerSlot
 
                 $newsRepository = $this->objectManager->get(NewsRepository::class);
                 $newsItems = $newsRepository->findDemanded($demand);
+
+                $data['demand'] = $demand;
+                $data['news']  = $newsItems;
             }
 
             $extended = [
@@ -67,43 +72,29 @@ class NewsControllerSlot
                 $tagRepository = $this->objectManager->get(TagRepository::class);
                 $extended['tags'] = $tagRepository->findByIdList($tags2);
             }
+
+            $data['extendedVariables'] = $extended;
         }
 
-        $data = [
-            'news' => $newsItems,
-            'overwriteDemand' => $overwriteDemand,
-            'demand' => $demand,
-            'categories' => $categories,
-            'tags' => $tags,
-            'settings' => $settings,
-            'extendedVariables' => $extended
-        ];
-
-        return $data;
+        $event->setAssignedValues($data);
     }
 
     protected function getAllRecordsByPid(string $tableName, string $pidList): array
     {
         $list = [];
-        if (class_exists(ConnectionPool::class)) {
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-            $rows = $queryBuilder
-                ->select('uid')
-                ->from($tableName)
-                ->where(
-                    $queryBuilder->expr()->in(
-                        'pid',
-                        $queryBuilder->createNamedParameter(explode(',', $pidList), \TYPO3\CMS\Core\Database\Connection::PARAM_INT_ARRAY)
-                    )
+
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
+        $rows = $queryBuilder
+            ->select('uid')
+            ->from($tableName)
+            ->where(
+                $queryBuilder->expr()->in(
+                    'pid',
+                    $queryBuilder->createNamedParameter(explode(',', $pidList), Connection::PARAM_INT_ARRAY)
                 )
-                ->execute()
-                ->fetchAll();
-        } else {
-            /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $db */
-            $db = $GLOBALS['TYPO3_DB'];
-            $where = 'pid IN(' . $db->cleanIntList($pidList) . ')';
-            $rows = $db->exec_SELECTgetRows('uid', $tableName, $where);
-        }
+            )
+            ->execute()
+            ->fetchAll();
 
         foreach ($rows as $row) {
             $list[] = $row['uid'];
@@ -136,34 +127,33 @@ class NewsControllerSlot
 
         $demand->setCategories(GeneralUtility::trimExplode(',', $settings['categories'], true));
         $demand->setCategoryConjunction($settings['categoryConjunction']);
-        $demand->setIncludeSubCategories($settings['includeSubCategories']);
+        $demand->setIncludeSubCategories((bool)$settings['includeSubCategories']);
         $demand->setTags($settings['tags']);
 
-        $demand->setTopNewsRestriction($settings['topNewsRestriction']);
+        $demand->setTopNewsRestriction((int)$settings['topNewsRestriction']);
         $demand->setTimeRestriction($settings['timeRestriction']);
         $demand->setTimeRestrictionHigh($settings['timeRestrictionHigh']);
         $demand->setArchiveRestriction($settings['archiveRestriction']);
-        $demand->setExcludeAlreadyDisplayedNews($settings['excludeAlreadyDisplayedNews']);
-        $demand->setHideIdList($settings['hideIdList']);
+        $demand->setExcludeAlreadyDisplayedNews((bool)$settings['excludeAlreadyDisplayedNews']);
+        $demand->setHideIdList((string)$settings['hideIdList'] ?? '');
 
         if ($settings['orderBy']) {
             $demand->setOrder($settings['orderBy'] . ' ' . $settings['orderDirection']);
         }
         $demand->setOrderByAllowed($settings['orderByAllowed']);
 
-        $demand->setTopNewsFirst($settings['topNewsFirst']);
+        $demand->setTopNewsFirst((bool)$settings['topNewsFirst']);
 
-        $demand->setLimit($settings['limit']);
-        $demand->setOffset($settings['offset']);
+        $demand->setLimit((int)$settings['limit']);
+        $demand->setOffset((int)$settings['offset']);
 
         $demand->setSearchFields($settings['search']['fields']);
         $demand->setDateField($settings['dateField']);
-        $demand->setMonth($settings['month']);
-        $demand->setYear($settings['year']);
+        $demand->setMonth((int)$settings['month']);
+        $demand->setYear((int)$settings['year']);
 
         $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint'],
             $settings['recursive']));
         return $demand;
     }
-
 }

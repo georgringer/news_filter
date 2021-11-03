@@ -1,0 +1,6 @@
+services:
+  GeorgRinger\NewsFilter\EventListener\NewsListActionEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'newslist-manipulation'
+        event: GeorgRinger\News\Event\NewsListActionEvent
