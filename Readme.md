@@ -10,8 +10,8 @@ This extension has been sponsored by [University Basel](https://www.unibas.ch)
 
 ## Requirements
 
-- TYPO3 8.7 - 9.5 (7 should work as well)
-- news 7.x
+- TYPO3 10.4
+- news 9.x
 
 ## Usage
 
