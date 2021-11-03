@@ -41,9 +41,6 @@ class NewsListActionEventListener
                 $search = $this->objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
 
                 $demand = $this->createDemandObjectFromSettings($settings, Demand::class);
-                $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint']));
-                $demand->setCategories(explode(',', $settings['categories']));
-
                 $demand->setFilteredCategories($search->getFilteredCategories());
                 $demand->setFilteredTags($search->getFilteredTags());
                 $demand->setFromDate($search->getFromDate());
@@ -152,8 +149,8 @@ class NewsListActionEventListener
         $demand->setMonth((int)$settings['month']);
         $demand->setYear((int)$settings['year']);
 
-        $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint'],
-            $settings['recursive']));
+        $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint'], $settings['recursive']));
+
         return $demand;
     }
 }
