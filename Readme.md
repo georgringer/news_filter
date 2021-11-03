@@ -11,7 +11,7 @@ This extension has been sponsored by [University Basel](https://www.unibas.ch)
 ## Requirements
 
 - TYPO3 10.4
-- news 8.x
+- news 9.x
 
 ## Usage
 
