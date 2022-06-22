@@ -18,8 +18,8 @@
   "homepage": "https://ringer.it",
   "license": ["GPL-2.0-or-later"],
   "require": {
-    "typo3/cms-core": "^8.7 || ^9.5",
-    "georgringer/news": "^6.3|| ^7"
+    "typo3/cms-core": "^10.4",
+    "georgringer/news": "^8"
   },
   "autoload": {
     "psr-4": {
@@ -27,7 +27,11 @@
     }
   },
   "replace": {
-    "news_filter": "self.version",
     "typo3-ter/news-filter": "self.version"
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "news_filter"
+    }
   }
 }

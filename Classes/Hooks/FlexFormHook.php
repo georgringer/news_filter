@@ -2,6 +2,8 @@
 
 namespace GeorgRinger\NewsFilter\Hooks;
 
+use TYPO3\CMS\Core\Core\Environment;
+
 class FlexFormHook
 {
 
@@ -18,7 +20,7 @@ class FlexFormHook
     public function getFlexFormDS_postProcessDS(&$dataStructArray, $conf, $row, $table)
     {
         if ($table === 'tt_content' && $row['CType'] === 'list' && $row['list_type'] === 'news_pi1') {
-            $dataStructArray['sheets']['extraEntry'] = self::PATH;
+            $dataStructArray['sheets']['extraEntryNewsFilter'] = self::PATH;
         }
     }
 
@@ -32,10 +34,10 @@ class FlexFormHook
     public function parseDataStructureByIdentifierPostProcess(array $dataStructure, array $identifier): array
     {
         if ($identifier['type'] === 'tca' && $identifier['tableName'] === 'tt_content' && $identifier['dataStructureKey'] === 'news_pi1,list') {
-            $file = PATH_site . self::PATH;
+            $file = Environment::getPublicPath() . '/' . self::PATH;
             $content = file_get_contents($file);
             if ($content) {
-                $dataStructure['sheets']['extraEntry'] = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($content);
+                $dataStructure['sheets']['extraEntryNewsFilter'] = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($content);
             }
         }
         return $dataStructure;
