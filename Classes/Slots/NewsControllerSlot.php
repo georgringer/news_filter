@@ -37,11 +37,15 @@ class NewsControllerSlot
             if (isset($vars['search']) && is_array($vars['search'])) {
                 /** @var Search $search */
                 $search = $this->objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
+                $search->setFields($settings['search']['fields']);
+                $search->setDateField($settings['dateField']);
+                $search->setSplitSubjectWords((bool)$settings['search']['splitSearchWord']);
 
                 $demand = $this->createDemandObjectFromSettings($settings, Demand::class);
                 $demand->setStoragePage(\GeorgRinger\News\Utility\Page::extendPidListByChildren($settings['startingpoint']));
                 $demand->setCategories(explode(',', $settings['categories']));
 
+                $demand->setSearch($search);
                 $demand->setFilteredCategories($search->getFilteredCategories());
                 $demand->setFilteredTags($search->getFilteredTags());
                 $demand->setFromDate($search->getFromDate());
