@@ -41,7 +41,7 @@ class NewsListActionEventListener
                 $search = $this->objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
 
                 $demand = $this->createDemandObjectFromSettings($settings, Demand::class);
-                $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint']));
+                $demand->setStoragePage(\GeorgRinger\News\Utility\Page::extendPidListByChildren($settings['startingpoint'], $settings['recursive']));
                 $demand->setCategories(explode(',', $settings['categories']));
 
                 $demand->setFilteredCategories($search->getFilteredCategories());
