@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace GeorgRinger\NewsFilter\Domain\Model\Dto;
 
@@ -8,80 +9,54 @@ class Demand extends NewsDemand
 {
 
     /** @var string */
-    protected $fromDate = '';
+    protected string $fromDate = '';
 
     /** @var string */
-    protected $toDate = '';
+    protected string $toDate = '';
 
     /** @var array */
-    protected $filteredTags = [];
+    protected array $filteredTags = [];
 
     /** @var array */
-    protected $filteredCategories = [];
+    protected array $filteredCategories = [];
 
-    /**
-     * @return string
-     */
     public function getFromDate(): string
     {
         return $this->fromDate;
     }
 
-    /**
-     * @param string $fromDate
-     */
-    public function setFromDate(string $fromDate)
+    public function setFromDate(string $fromDate): void
     {
         $this->fromDate = $fromDate;
     }
 
-    /**
-     * @return string
-     */
     public function getToDate(): string
     {
         return $this->toDate;
     }
 
-    /**
-     * @param string $toDate
-     */
-    public function setToDate(string $toDate)
+    public function setToDate(string $toDate): void
     {
         $this->toDate = $toDate;
     }
 
-    /**
-     * @return array
-     */
     public function getFilteredTags(): array
     {
         return $this->filteredTags;
     }
 
-    /**
-     * @param array $filteredTags
-     */
     public function setFilteredTags(array $filteredTags)
     {
         $this->filteredTags = $filteredTags;
     }
 
-    /**
-     * @return array
-     */
     public function getFilteredCategories(): array
     {
         return $this->filteredCategories;
     }
 
-    /**
-     * @param array $filteredCategories
-     */
-    public function setFilteredCategories(array $filteredCategories)
+    public function setFilteredCategories(array $filteredCategories): void
     {
         $this->filteredCategories = $filteredCategories;
     }
-
-
 }

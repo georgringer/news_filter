@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace GeorgRinger\NewsFilter\EventListener;
 
-use GeorgRinger\NewsFilter\Domain\Model\Dto\Demand;
-use GeorgRinger\NewsFilter\Domain\Model\Dto\Search;
 use GeorgRinger\News\Domain\Repository\CategoryRepository;
-use GeorgRinger\News\Domain\Repository\NewsRepository;
 use GeorgRinger\News\Domain\Repository\TagRepository;
 use GeorgRinger\News\Event\NewsListActionEvent;
 use GeorgRinger\News\Utility\Page;
+use GeorgRinger\NewsFilter\Domain\Model\Dto\Search;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -29,7 +27,7 @@ class NewsListActionEventListener
 
     public function __invoke(NewsListActionEvent $event)
     {
-        $data     = $event->getAssignedValues();
+        $data = $event->getAssignedValues();
         $settings = $data['settings'];
 
         if ($settings['enableFilter']) {
@@ -39,21 +37,6 @@ class NewsListActionEventListener
             if (isset($vars['search']) && is_array($vars['search'])) {
                 /** @var Search $search */
                 $search = $this->objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
-
-                $demand = $this->createDemandObjectFromSettings($settings, Demand::class);
-                $demand->setStoragePage(\GeorgRinger\News\Utility\Page::extendPidListByChildren($settings['startingpoint'], $settings['recursive']));
-                $demand->setCategories(explode(',', $settings['categories']));
-
-                $demand->setFilteredCategories($search->getFilteredCategories());
-                $demand->setFilteredTags($search->getFilteredTags());
-                $demand->setFromDate($search->getFromDate());
-                $demand->setToDate($search->getToDate());
-
-                $newsRepository = $this->objectManager->get(NewsRepository::class);
-                $newsItems = $newsRepository->findDemanded($demand);
-
-                $data['demand'] = $demand;
-                $data['news']  = $newsItems;
             }
 
             $extended = [

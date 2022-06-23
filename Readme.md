@@ -16,8 +16,16 @@ This extension has been sponsored by [University Basel](https://www.unibas.ch)
 ## Usage
 
 1. Install the extension just as any other extension. Either use the Extension Manager or composer and `composer require georgringer/news-filter`.
-2. Select the action "list" in the news plugin and active the enable checkbox
+2. Select the action "list" in the news plugin and activate the additional checkbox "Enable filter"
 3. Select page of categories & tags.
+
+### TypoScript
+
+The following TypoScript is required
+
+```typo3_typoscript
+plugin.tx_news.settings.demandClass = GeorgRinger\NewsFilter\Domain\Model\Dto\Demand
+```
 
 ### Templating
 
