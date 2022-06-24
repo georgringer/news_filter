@@ -1,9 +1,13 @@
 <h1>Form</h1>
 
-<f:form action="newsFilter" object="{search}" name="search" class="form-horizontal">
+<f:form action="list" object="{extendedVariables.searchDemand}" name="search" class="form-horizontal">
     <fieldset>
         <div class="form-group">
-            <f:for each="{categories}" as="category">
+            <label for="news-subject"><f:translate key="search-subject" /></label>
+            <f:form.textfield id="news-subject" property="subject" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <f:for each="{extendedVariables.categories}" as="category">
                 <div class="checkbox">
                     <label>
                         <f:form.checkbox property="filteredCategories" value="{category.uid}"/>
@@ -13,7 +17,7 @@
             </f:for>
         </div>
         <div class="form-group">
-            <f:for each="{tags}" as="tag">
+            <f:for each="{extendedVariables.tags}" as="tag">
                 <div class="tag">
                     <label>
                         <f:form.checkbox property="filteredTags" value="{tag.uid}"/>
@@ -39,4 +43,3 @@
         <f:form.submit value="submit" class="btn btn-primary"/>
     </fieldset>
 </f:form>
-

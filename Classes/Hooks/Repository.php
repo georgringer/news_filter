@@ -9,9 +9,9 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 class Repository
 {
 
-    public function modify(array $params, NewsRepository $newsRepository): void
+    public function modify(array $params, $newsRepository): void
     {
-        if (\get_class($params['demand']) !== Demand::class) {
+        if (!($newsRepository instanceof NewsRepository) || \get_class($params['demand']) !== Demand::class) {
             return;
         }
         $this->updateConstraints($params['demand'], $params['query'], $params['constraints']);
