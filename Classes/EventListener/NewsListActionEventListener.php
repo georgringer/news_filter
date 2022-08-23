@@ -30,7 +30,7 @@ class NewsListActionEventListener
         $data = $event->getAssignedValues();
         $settings = $data['settings'];
 
-        if ($settings['enableFilter']) {
+        if ($settings['enableFilter'] ?? false) {
             $search = $this->objectManager->get(Search::class);
 
             $vars = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('tx_news_pi1');
