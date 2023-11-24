@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace GeorgRinger\NewsFilter\EventListener;
 
+use TYPO3\CMS\Core\Context\Context;
+use GeorgRinger\News\Domain\Model\Dto\NewsDemand;
 use GeorgRinger\News\Domain\Repository\CategoryRepository;
 use GeorgRinger\News\Domain\Repository\TagRepository;
 use GeorgRinger\News\Event\NewsListActionEvent;
@@ -33,14 +35,14 @@ class NewsListActionEventListener
         if ($settings['enableFilter'] ?? false) {
             $search = $this->objectManager->get(Search::class);
 
-            $vars = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('tx_news_pi1');
+            $vars = GeneralUtility::_POST('tx_news_pi1');
             if (isset($vars['search']) && is_array($vars['search'])) {
                 /** @var Search $search */
                 $search = $this->objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
             }
 
             $extended = [
-                'currentDate' => $GLOBALS['EXEC_TIME'],
+                'currentDate' => GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('date', 'timestamp'),
                 'searchDemand' => $search,
             ];
 
@@ -90,7 +92,7 @@ class NewsListActionEventListener
      *
      * @param array $settings
      * @param string $class optional class which must be an instance of \GeorgRinger\News\Domain\Model\Dto\NewsDemand
-     * @return \GeorgRinger\News\Domain\Model\Dto\NewsDemand
+     * @return NewsDemand
      */
     protected function createDemandObjectFromSettings(
         $settings,
@@ -101,7 +103,7 @@ class NewsListActionEventListener
 
         /* @var $demand \GeorgRinger\News\Domain\Model\Dto\NewsDemand */
         $demand = $this->objectManager->get($class, $settings);
-        if (!$demand instanceof \GeorgRinger\News\Domain\Model\Dto\NewsDemand) {
+        if (!$demand instanceof NewsDemand) {
             throw new \UnexpectedValueException(
                 sprintf('The demand object must be an instance of \GeorgRinger\\News\\Domain\\Model\\Dto\\NewsDemand, but %s given!',
                     $class),

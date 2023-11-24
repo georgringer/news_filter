@@ -2,6 +2,7 @@
 
 namespace GeorgRinger\NewsFilter\Hooks;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Core\Environment;
 
 class FlexFormHook
@@ -37,7 +38,7 @@ class FlexFormHook
             $file = Environment::getPublicPath() . '/' . self::PATH;
             $content = file_get_contents($file);
             if ($content) {
-                $dataStructure['sheets']['extraEntryNewsFilter'] = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($content);
+                $dataStructure['sheets']['extraEntryNewsFilter'] = GeneralUtility::xml2array($content);
             }
         }
         return $dataStructure;

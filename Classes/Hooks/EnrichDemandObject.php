@@ -22,7 +22,7 @@ class EnrichDemandObject
 
 
         if ($settings['enableFilter']) {
-            $vars = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('tx_news_pi1');
+            $vars = GeneralUtility::_POST('tx_news_pi1');
             if (isset($vars['search']) && is_array($vars['search'])) {
                 /** @var Search $search */
                 $search = $objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
