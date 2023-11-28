@@ -1,5 +1,14 @@
 services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  GeorgRinger\NewsFilter\Hooks\EnrichDemandObject:
+    public: true
+
   GeorgRinger\NewsFilter\EventListener\NewsListActionEventListener:
+    public: true
     tags:
       - name: event.listener
         identifier: 'newslist-manipulation'

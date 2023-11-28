@@ -11,6 +11,14 @@ use TYPO3\CMS\Extbase\Property\PropertyMapper;
 
 class EnrichDemandObject
 {
+    /** @var PropertyMapper */
+    protected $propertyMapper;
+
+    public function __construct(PropertyMapper $propertyMapper)
+    {
+        $this->propertyMapper = $propertyMapper;
+    }
+
     public function run(array &$params): void
     {
         $demand = $params['demand'];
@@ -18,14 +26,12 @@ class EnrichDemandObject
             return;
         }
         $settings = $params['settings'];
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
 
         if ($settings['enableFilter']) {
             $vars = GeneralUtility::_POST('tx_news_pi1');
             if (isset($vars['search']) && is_array($vars['search'])) {
                 /** @var Search $search */
-                $search = $objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
+                $search = $this->propertyMapper->convert($vars['search'], Search::class);
 
                 $demand->setFilteredCategories($search->getFilteredCategories());
                 $demand->setFilteredTags($search->getFilteredTags());
