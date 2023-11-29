@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2023-11-29T13:15:00Z" product-name="news_filter">
+        <header/>
+        <body>
+            <trans-unit id="settings.enableFilter" xml:space="preserve">
+                <source>Enable filter</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
