@@ -27,17 +27,18 @@ class EnrichDemandObject
         }
         $settings = $params['settings'];
 
-        if ($settings['enableFilter']) {
+        if ($settings['enableFilter'] ?? false) {
             $vars = GeneralUtility::_POST('tx_news_pi1');
             if (isset($vars['search']) && is_array($vars['search'])) {
                 /** @var Search $search */
                 $search = $this->propertyMapper->convert($vars['search'], Search::class);
-
+                $search->setFields($settings['search']['fields']);
+                $search->setSplitSubjectWords((bool)$settings['search']['splitSearchWord']);
+                $demand->setSearch($search);
                 $demand->setFilteredCategories($search->getFilteredCategories());
                 $demand->setFilteredTags($search->getFilteredTags());
                 $demand->setFromDate($search->getFromDate());
                 $demand->setToDate($search->getToDate());
-
             }
         }
     }
