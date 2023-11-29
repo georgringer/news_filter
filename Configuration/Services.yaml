@@ -11,5 +11,11 @@ services:
     public: true
     tags:
       - name: event.listener
-        identifier: 'newslist-manipulation'
+        identifier: 'news_filter-manipulation'
         event: GeorgRinger\News\Event\NewsListActionEvent
+
+  GeorgRinger\NewsFilter\Hooks\FlexFormHook:
+    tags:
+      - name: event.listener
+        identifier: 'news_filter-flexformhook'
+        event: TYPO3\CMS\Core\Configuration\Event\AfterFlexFormDataStructureParsedEvent

@@ -1,6 +1,8 @@
 <extra>
 <ROOT>
-    <sheetTitle>NewsFilter</sheetTitle>
+    <TCEforms>
+        <sheetTitle>NewsFilter</sheetTitle>
+    </TCEforms>
     <type>array</type>
     <el>
         <settings.enableFilter>
