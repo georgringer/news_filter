@@ -1,48 +1,40 @@
 <extra>
 <ROOT>
-    <TCEforms>
-        <sheetTitle>NewsFilter</sheetTitle>
-    </TCEforms>
+    <sheetTitle>NewsFilter</sheetTitle>
     <type>array</type>
     <el>
         <settings.enableFilter>
-            <TCEforms>
-                <label>Enable filter</label>
-                <config>
-                    <type>check</type>
-                    <default>0</default>
-                </config>
-            </TCEforms>
+            <label>LLL:EXT:news_filter/Resources/Private/Language/locallang_ff.xlf:settings.enableFilter</label>
+            <config>
+                <type>check</type>
+                <default>0</default>
+            </config>
         </settings.enableFilter>
 
         <!-- Category -->
         <settings.filterCategories>
-            <TCEforms>
-                <label>LLL:EXT:news/Resources/Private/Language/locallang_be.xlf:flexforms_general.categories</label>
-                <config>
-                    <type>group</type>
-                    <internal_type>db</internal_type>
-                    <allowed>pages</allowed>
-                    <size>2</size>
-                    <maxitems>50</maxitems>
-                    <minitems>0</minitems>
-                </config>
-            </TCEforms>
+            <label>LLL:EXT:news/Resources/Private/Language/locallang_be.xlf:flexforms_general.categories</label>
+            <config>
+                <type>group</type>
+                <internal_type>db</internal_type>
+                <allowed>pages</allowed>
+                <size>2</size>
+                <maxitems>50</maxitems>
+                <minitems>0</minitems>
+            </config>
         </settings.filterCategories>
 
         <!-- Tags -->
         <settings.filterTags>
-            <TCEforms>
-                <label>LLL:EXT:news/Resources/Private/Language/locallang_be.xlf:flexforms_additional.tags</label>
-                <config>
-                    <type>group</type>
-                    <internal_type>db</internal_type>
-                    <allowed>pages</allowed>
-                    <size>2</size>
-                    <maxitems>50</maxitems>
-                    <minitems>0</minitems>
-                </config>
-            </TCEforms>
+            <label>LLL:EXT:news/Resources/Private/Language/locallang_be.xlf:flexforms_additional.tags</label>
+            <config>
+                <type>group</type>
+                <internal_type>db</internal_type>
+                <allowed>pages</allowed>
+                <size>2</size>
+                <maxitems>50</maxitems>
+                <minitems>0</minitems>
+            </config>
         </settings.filterTags>
     </el>
 </ROOT>
