@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GeorgRinger\NewsFilter\Hooks;
@@ -6,7 +7,6 @@ namespace GeorgRinger\NewsFilter\Hooks;
 use GeorgRinger\NewsFilter\Domain\Model\Dto\Demand;
 use GeorgRinger\NewsFilter\Domain\Model\Dto\Search;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 
 class EnrichDemandObject

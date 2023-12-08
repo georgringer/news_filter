@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace GeorgRinger\NewsFilter\EventListener;
 
-use TYPO3\CMS\Core\Context\Context;
 use GeorgRinger\News\Domain\Model\Dto\NewsDemand;
 use GeorgRinger\News\Domain\Repository\CategoryRepository;
 use GeorgRinger\News\Domain\Repository\TagRepository;
 use GeorgRinger\News\Event\NewsListActionEvent;
 use GeorgRinger\News\Utility\Page;
 use GeorgRinger\NewsFilter\Domain\Model\Dto\Search;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 
 class NewsListActionEventListener
@@ -32,8 +31,7 @@ class NewsListActionEventListener
         CategoryRepository $categoryRepository,
         TagRepository $tagRepository,
         PropertyMapper $propertyMapper
-    )
-    {
+    ) {
         $this->categoryRepository = $categoryRepository;
         $this->tagRepository = $tagRepository;
         $this->propertyMapper = $propertyMapper;
@@ -107,17 +105,19 @@ class NewsListActionEventListener
     protected function createDemandObjectFromSettings(
         $settings,
         $class = 'GeorgRinger\\News\\Domain\\Model\\Dto\\NewsDemand'
-    )
-    {
+    ) {
         $class = isset($settings['demandClass']) && !empty($settings['demandClass']) ? $settings['demandClass'] : $class;
 
         /* @var $demand \GeorgRinger\News\Domain\Model\Dto\NewsDemand */
         $demand = GeneralUtility::makeInstance($class, $settings);
         if (!$demand instanceof NewsDemand) {
             throw new \UnexpectedValueException(
-                sprintf('The demand object must be an instance of \GeorgRinger\\News\\Domain\\Model\\Dto\\NewsDemand, but %s given!',
-                    $class),
-                1423157953);
+                sprintf(
+                    'The demand object must be an instance of \GeorgRinger\\News\\Domain\\Model\\Dto\\NewsDemand, but %s given!',
+                    $class
+                ),
+                1423157953
+            );
         }
 
         $demand->setCategories(GeneralUtility::trimExplode(',', $settings['categories'], true));
@@ -147,8 +147,10 @@ class NewsListActionEventListener
         $demand->setMonth((int)$settings['month']);
         $demand->setYear((int)$settings['year']);
 
-        $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint'],
-            $settings['recursive']));
+        $demand->setStoragePage(Page::extendPidListByChildren(
+            $settings['startingpoint'],
+            $settings['recursive']
+        ));
         return $demand;
     }
 }

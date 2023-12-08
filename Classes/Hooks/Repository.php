@@ -8,7 +8,6 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class Repository
 {
-
     public function modify(array $params, $newsRepository): void
     {
         if (!($newsRepository instanceof NewsRepository) || \get_class($params['demand']) !== Demand::class) {
@@ -61,6 +60,5 @@ class Repository
             }
             $constraints['filteredTags'] = $query->logicalOr($tagConstraint);
         }
-
     }
 }

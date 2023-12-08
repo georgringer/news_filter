@@ -6,7 +6,6 @@ use GeorgRinger\News\Domain\Model\Dto\Search as NewsSearch;
 
 class Search extends NewsSearch
 {
-
     /** @var string */
     protected $fromDate = '';
 
@@ -82,5 +81,4 @@ class Search extends NewsSearch
     {
         $this->filteredCategories = $filteredCategories;
     }
-
 }
