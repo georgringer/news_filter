@@ -34,7 +34,7 @@ class CategoryRepository extends \GeorgRinger\News\Domain\Repository\CategoryRep
 
         return $query->matching(
             $query->logicalAnd(
-                $conditions
+                ...$conditions
             )
         )->execute();
     }
