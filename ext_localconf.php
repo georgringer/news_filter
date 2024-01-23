@@ -15,11 +15,6 @@ if (isset($vars['search']) && is_array($vars['search'])) {
 
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['news']['classes']['Domain/Repository/CategoryRepository'][] = 'news_filter';
 
-// For 7x
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_befunc.php']['getFlexFormDSClass']['news_filter']
-    = \GeorgRinger\NewsFilter\Hooks\FlexFormHook::class;
-
-// For 8x
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'][\TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools::class]['flexParsing']['news_filter']
     = \GeorgRinger\NewsFilter\Hooks\FlexFormHook::class;
 
