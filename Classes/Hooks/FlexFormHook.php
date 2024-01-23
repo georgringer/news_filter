@@ -19,7 +19,7 @@ class FlexFormHook
         if ($identifier['type'] === 'tca' && $identifier['tableName'] === 'tt_content' && in_array($identifier['dataStructureKey'], self::CTYPES)) {
             $content = file_get_contents($this->getPath());
             if ($content) {
-                $dataStructure['sheets']['extraEntryEventNews'] = GeneralUtility::xml2array($content);
+                $dataStructure['sheets']['extraEntryNewsFilter'] = GeneralUtility::xml2array($content);
             }
         }
         $event->setDataStructure($dataStructure);
