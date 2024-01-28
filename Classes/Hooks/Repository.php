@@ -8,7 +8,6 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class Repository
 {
-
     public function modify(array $params, $newsRepository): void
     {
         if (!($newsRepository instanceof NewsRepository) || \get_class($params['demand']) !== Demand::class) {
@@ -49,7 +48,7 @@ class Repository
             foreach ($categories as $category) {
                 $categoryConstraint[] = $query->contains('categories', $category);
             }
-            $constraints['filteredCategories'] = $query->logicalOr($categoryConstraint);
+            $constraints['filteredCategories'] = $query->logicalOr(...$categoryConstraint);
         }
 
         // tags
@@ -59,8 +58,7 @@ class Repository
             foreach ($tags as $tag) {
                 $tagConstraint[] = $query->contains('tags', $tag);
             }
-            $constraints['filteredTags'] = $query->logicalOr($tagConstraint);
+            $constraints['filteredTags'] = $query->logicalOr(...$tagConstraint);
         }
-
     }
 }

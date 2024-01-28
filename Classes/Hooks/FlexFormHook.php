@@ -2,29 +2,28 @@
 
 namespace GeorgRinger\NewsFilter\Hooks;
 
-use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Configuration\Event\AfterFlexFormDataStructureParsedEvent;
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FlexFormHook
 {
+    private const CTYPES = ['*,news_pi1', '*,news_newsliststicky'];
 
-    const PATH = 'typo3conf/ext/news_filter/Configuration/FlexForms/flexform_newsfilter.xml';
-
-    // For 7x
-
-    /**
-     * @param array $dataStructArray
-     * @param array $conf
-     * @param array $row
-     * @param string $table
-     */
-    public function getFlexFormDS_postProcessDS(&$dataStructArray, $conf, $row, $table)
+    public function __invoke(AfterFlexFormDataStructureParsedEvent $event): void
     {
-        if ($table === 'tt_content' && $row['CType'] === 'list' && $row['list_type'] === 'news_pi1') {
-            $dataStructArray['sheets']['extraEntryNewsFilter'] = self::PATH;
-        }
-    }
+        $dataStructure = $event->getDataStructure();
+        $identifier = $event->getIdentifier();
 
-    // For 8x
+        if ($identifier['type'] === 'tca' && $identifier['tableName'] === 'tt_content' && in_array($identifier['dataStructureKey'], self::CTYPES)) {
+            $content = file_get_contents($this->getPath());
+            if ($content) {
+                $dataStructure['sheets']['extraEntryNewsFilter'] = GeneralUtility::xml2array($content);
+            }
+        }
+        $event->setDataStructure($dataStructure);
+    }
 
     /**
      * @param array $dataStructure
@@ -33,13 +32,18 @@ class FlexFormHook
      */
     public function parseDataStructureByIdentifierPostProcess(array $dataStructure, array $identifier): array
     {
-        if ($identifier['type'] === 'tca' && $identifier['tableName'] === 'tt_content' && $identifier['dataStructureKey'] === 'news_pi1,list') {
-            $file = Environment::getPublicPath() . '/' . self::PATH;
-            $content = file_get_contents($file);
+        if ($identifier['type'] === 'tca' && $identifier['tableName'] === 'tt_content' && in_array($identifier['dataStructureKey'], self::CTYPES)) {
+            $content = file_get_contents($this->getPath());
             if ($content) {
-                $dataStructure['sheets']['extraEntryNewsFilter'] = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($content);
+                $dataStructure['sheets']['extraEntryNewsFilter'] = GeneralUtility::xml2array($content);
             }
         }
         return $dataStructure;
+    }
+
+    protected function getPath(): string
+    {
+        $file = (new Typo3Version())->getMajorVersion() >= 12 ? 'flexform_newsfilter12.xml' : 'flexform_newsfilter.xml';
+        return ExtensionManagementUtility::extPath('news_filter') . 'Configuration/FlexForms/' . $file;
     }
 }

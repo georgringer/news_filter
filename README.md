@@ -5,19 +5,20 @@ This extension makes it possible to filter news in the frontend by the following
 - date from & to
 - categories
 - tags
+- sword
 
 This extension has been sponsored by [University Basel](https://www.unibas.ch)
 
 ## Requirements
 
-- TYPO3 10.4
-- news 9.x
+- TYPO3 11.5 or 12.4
+- EXT:news 11.x
 
 ## Usage
 
 1. Install the extension just as any other extension. Either use the Extension Manager or composer and `composer require georgringer/news-filter`.
-2. Select the action "list" in the news plugin and activate the additional checkbox "Enable filter"
-3. Select page of categories & tags.
+2. Select the action "list" in the news plugin and activate the additional checkbox "Enable filter".
+3. Select folders containing categories & tags.
 
 ### TypoScript
 
@@ -29,9 +30,9 @@ plugin.tx_news.settings.demandClass = GeorgRinger\NewsFilter\Domain\Model\Dto\De
 
 ### Templating
 
-Add the following part to your `List.html`:
+Add the following part to your `News/List.html`:
 
-```
+```xml
 	<f:form action="list" object="{extendedVariables.searchDemand}" name="search" class="form-horizontal">
 		<fieldset>
 			<div class="form-group">
@@ -76,4 +77,3 @@ Add the following part to your `List.html`:
 		</fieldset>
 	</f:form>
 ```
-

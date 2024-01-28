@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GeorgRinger\NewsFilter\Hooks;
@@ -6,11 +7,18 @@ namespace GeorgRinger\NewsFilter\Hooks;
 use GeorgRinger\NewsFilter\Domain\Model\Dto\Demand;
 use GeorgRinger\NewsFilter\Domain\Model\Dto\Search;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 
 class EnrichDemandObject
 {
+    /** @var PropertyMapper */
+    protected $propertyMapper;
+
+    public function __construct(PropertyMapper $propertyMapper)
+    {
+        $this->propertyMapper = $propertyMapper;
+    }
+
     public function run(array &$params): void
     {
         $demand = $params['demand'];
@@ -18,20 +26,19 @@ class EnrichDemandObject
             return;
         }
         $settings = $params['settings'];
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
-
-        if ($settings['enableFilter']) {
-            $vars = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('tx_news_pi1');
+        if ($settings['enableFilter'] ?? false) {
+            $vars = GeneralUtility::_POST('tx_news_pi1');
             if (isset($vars['search']) && is_array($vars['search'])) {
                 /** @var Search $search */
-                $search = $objectManager->get(PropertyMapper::class)->convert($vars['search'], Search::class);
-
+                $search = $this->propertyMapper->convert($vars['search'], Search::class);
+                $search->setFields($settings['search']['fields']);
+                $search->setSplitSubjectWords((bool)$settings['search']['splitSearchWord']);
+                $demand->setSearch($search);
                 $demand->setFilteredCategories($search->getFilteredCategories());
                 $demand->setFilteredTags($search->getFilteredTags());
                 $demand->setFromDate($search->getFromDate());
                 $demand->setToDate($search->getToDate());
-
             }
         }
     }

@@ -5,11 +5,9 @@
     </TCEforms>
     <type>array</type>
     <el>
-
-
         <settings.enableFilter>
             <TCEforms>
-                <label>Enable filter</label>
+                <label>LLL:EXT:news_filter/Resources/Private/Language/locallang_ff.xlf:settings.enableFilter</label>
                 <config>
                     <type>check</type>
                     <default>0</default>

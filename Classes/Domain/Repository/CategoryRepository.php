@@ -2,9 +2,8 @@
 
 namespace GeorgRinger\NewsFilter\Domain\Repository;
 
-class CategoryRepository extends \GeorgRinger\News\Domain\Repository\CategoryRepository {
-
-
+class CategoryRepository extends \GeorgRinger\News\Domain\Repository\CategoryRepository
+{
     /**
      * Find categories by a given pid
      *
@@ -35,8 +34,8 @@ class CategoryRepository extends \GeorgRinger\News\Domain\Repository\CategoryRep
 
         return $query->matching(
             $query->logicalAnd(
-                $conditions
-            ))->execute();
+                ...$conditions
+            )
+        )->execute();
     }
-
 }

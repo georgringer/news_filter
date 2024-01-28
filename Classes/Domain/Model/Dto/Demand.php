@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GeorgRinger\NewsFilter\Domain\Model\Dto;
@@ -7,7 +8,6 @@ use GeorgRinger\News\Domain\Model\Dto\NewsDemand;
 
 class Demand extends NewsDemand
 {
-
     /** @var string */
     protected string $fromDate = '';
 
