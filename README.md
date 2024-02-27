@@ -77,3 +77,17 @@ Add the following part to your `News/List.html`:
 		</fieldset>
 	</f:form>
 ```
+
+### Order categories and tags
+
+```typo3_typoscript
+plugin.tx_news {
+	settings {
+		filterCategoriesOrderBy = title
+		filterCategoriesOrderDirection = asc
+
+		filterTagsOrderBy = title
+		filterTagsOrderDirection = asc
+	}
+}
+```

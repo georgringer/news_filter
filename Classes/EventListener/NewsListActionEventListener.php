@@ -58,12 +58,26 @@ class NewsListActionEventListener
 
             $categories2 = $this->getAllRecordsByPid('sys_category', $settings['filterCategories']);
             if (!empty($categories2)) {
-                $extended['categories'] = $this->categoryRepository->findByIdListWithLanguageSupport($categories2);
+                if ($settings['filterCategoriesOrderBy'] ?? false) {
+                    $categories2order = [
+                        $settings['filterCategoriesOrderBy'] => strtoupper($settings['filterCategoriesOrderDirection'] ?? 'ASC'),
+                    ];
+                } else {
+                    $categories2order = [];
+                }
+                $extended['categories'] = $this->categoryRepository->findByIdListWithLanguageSupport($categories2, $categories2order);
             }
 
             $tags2 = $this->getAllRecordsByPid('tx_news_domain_model_tag', $settings['filterTags']);
             if (!empty($tags2)) {
-                $extended['tags'] = $this->tagRepository->findByIdList($tags2);
+                if ($settings['filterTagsOrderBy'] ?? false) {
+                    $tags2order = [
+                        $settings['filterTagsOrderBy'] => strtoupper($settings['filterTagsOrderDirection'] ?? 'ASC'),
+                    ];
+                } else {
+                    $tags2order = [];
+                }
+                $extended['tags'] = $this->tagRepository->findByIdList($tags2, $tags2order);
             }
 
             $data['extendedVariables'] = $extended;
