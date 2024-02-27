@@ -3,9 +3,12 @@
     <file source-language="en" datatype="plaintext" original="messages" date="2023-11-29T13:15:00Z" product-name="news_filter">
         <header/>
         <body>
-            <trans-unit id="settings.enableFilter" xml:space="preserve">
-                <source>Enable filter</source>
-            </trans-unit>
+			<trans-unit id="settings.enableFilter" xml:space="preserve">
+				<source>Enable filter</source>
+			</trans-unit>
+			<trans-unit id="settings.keepFilterOnReload" xml:space="preserve">
+				<source>Keep filter on reload</source>
+			</trans-unit>
         </body>
     </file>
 </xliff>
