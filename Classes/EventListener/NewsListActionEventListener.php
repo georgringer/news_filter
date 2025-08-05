@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace GeorgRinger\NewsFilter\EventListener;
 
-use GeorgRinger\News\Domain\Model\Dto\NewsDemand;
+use Doctrine\DBAL\DBALException;
 use GeorgRinger\News\Domain\Repository\CategoryRepository;
 use GeorgRinger\News\Domain\Repository\TagRepository;
 use GeorgRinger\News\Event\NewsListActionEvent;
 use GeorgRinger\News\Utility\Page;
 use GeorgRinger\NewsFilter\Domain\Model\Dto\Search;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Property\Exception;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
+use TYPO3\CMS\Extbase\Service\CacheService;
 
+/**
+ * NewsListActionEventListener
+ */
 class NewsListActionEventListener
 {
     /** @var CategoryRepository */
@@ -27,26 +33,51 @@ class NewsListActionEventListener
     /** @var PropertyMapper */
     protected $propertyMapper;
 
+    /** @var CacheService */
+    protected $cacheService;
+
     public function __construct(
         CategoryRepository $categoryRepository,
         TagRepository $tagRepository,
-        PropertyMapper $propertyMapper
+        PropertyMapper $propertyMapper,
+        CacheService $cacheService
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->tagRepository = $tagRepository;
         $this->propertyMapper = $propertyMapper;
+        $this->cacheService = $cacheService;
     }
 
-    public function __invoke(NewsListActionEvent $event)
+    /**
+     * @throws Exception
+     * @throws AspectNotFoundException
+     */
+    public function __invoke(NewsListActionEvent $event): void
     {
         $data = $event->getAssignedValues();
         $settings = $data['settings'];
 
         if ($settings['enableFilter'] ?? false) {
-            $search = GeneralUtility::makeInstance(Search::class);
 
+            $search = $settings['keepFilterOnReload'] ?
+                $this->getSearchFromSession($event) :
+                GeneralUtility::makeInstance(Search::class);
+
+            // set a new search if a new search was submitted
             $vars = GeneralUtility::_POST('tx_news_pi1');
-            if (isset($vars['search']) && is_array($vars['search'])) {
+            $hasPostData = isset($vars['search']) && is_array($vars['search']);
+            if ($hasPostData) {
+
+                if ($settings['keepFilterOnReload']) {
+                    $this->saveSearchInSession($event, $vars['search']);
+
+                    // clear teh cache for the current page when a
+                    // new filter is saved to the session in order
+                    // to get the new filter after reloading the page
+                    $currentPage = $GLOBALS['TSFE']->id;
+                    $this->cacheService->clearPageCache([$currentPage]);
+                }
+
                 /** @var Search $search */
                 $search = $this->propertyMapper->convert($vars['search'], Search::class);
             }
@@ -86,6 +117,13 @@ class NewsListActionEventListener
         $event->setAssignedValues($data);
     }
 
+    /**
+     * @param string $tableName
+     * @param string $pidList
+     * @return array
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws DBALException
+     */
     protected function getAllRecordsByPid(string $tableName, string $pidList): array
     {
         $list = [];
@@ -100,8 +138,8 @@ class NewsListActionEventListener
                     $queryBuilder->createNamedParameter(explode(',', $pidList), Connection::PARAM_INT_ARRAY)
                 )
             )
-            ->execute()
-            ->fetchAll();
+            ->executeQuery()
+            ->fetchAllAssociative();
 
         foreach ($rows as $row) {
             $list[] = $row['uid'];
@@ -110,61 +148,39 @@ class NewsListActionEventListener
     }
 
     /**
-     * Create the demand object which define which records will get shown
+     * Load filter from session or create a new empty search
      *
-     * @param array $settings
-     * @param string $class optional class which must be an instance of \GeorgRinger\News\Domain\Model\Dto\NewsDemand
-     * @return NewsDemand
+     * @param NewsListActionEvent $event
+     * @return Search
+     * @throws Exception
      */
-    protected function createDemandObjectFromSettings(
-        $settings,
-        $class = 'GeorgRinger\\News\\Domain\\Model\\Dto\\NewsDemand'
-    ) {
-        $class = isset($settings['demandClass']) && !empty($settings['demandClass']) ? $settings['demandClass'] : $class;
-
-        /* @var $demand \GeorgRinger\News\Domain\Model\Dto\NewsDemand */
-        $demand = GeneralUtility::makeInstance($class, $settings);
-        if (!$demand instanceof NewsDemand) {
-            throw new \UnexpectedValueException(
-                sprintf(
-                    'The demand object must be an instance of \GeorgRinger\\News\\Domain\\Model\\Dto\\NewsDemand, but %s given!',
-                    $class
-                ),
-                1423157953
-            );
+    protected function getSearchFromSession(NewsListActionEvent $event): Search
+    {
+        $request = $event->getRequest();
+        $frontendUser = $request->getAttribute('frontend.user');
+        $sessionFilter = $frontendUser->getKey('ses', 'tx_news_filter');
+        if ($sessionFilter) {
+            $sessionFilter = unserialize($sessionFilter);
+            $search = $this->propertyMapper->convert($sessionFilter, Search::class);
+        } else {
+            $search = GeneralUtility::makeInstance(Search::class);
         }
 
-        $demand->setCategories(GeneralUtility::trimExplode(',', $settings['categories'], true));
-        $demand->setCategoryConjunction($settings['categoryConjunction']);
-        $demand->setIncludeSubCategories((bool)$settings['includeSubCategories']);
-        $demand->setTags($settings['tags']);
+        return $search;
+    }
 
-        $demand->setTopNewsRestriction((int)$settings['topNewsRestriction']);
-        $demand->setTimeRestriction($settings['timeRestriction']);
-        $demand->setTimeRestrictionHigh($settings['timeRestrictionHigh']);
-        $demand->setArchiveRestriction($settings['archiveRestriction']);
-        $demand->setExcludeAlreadyDisplayedNews((bool)$settings['excludeAlreadyDisplayedNews']);
-        $demand->setHideIdList((string)($settings['hideIdList'] ?? ''));
-
-        if ($settings['orderBy']) {
-            $demand->setOrder($settings['orderBy'] . ' ' . $settings['orderDirection']);
-        }
-        $demand->setOrderByAllowed($settings['orderByAllowed']);
-
-        $demand->setTopNewsFirst((bool)$settings['topNewsFirst']);
-
-        $demand->setLimit((int)$settings['limit']);
-        $demand->setOffset((int)$settings['offset']);
-
-        $demand->setSearchFields($settings['search']['fields']);
-        $demand->setDateField($settings['dateField']);
-        $demand->setMonth((int)$settings['month']);
-        $demand->setYear((int)$settings['year']);
-
-        $demand->setStoragePage(Page::extendPidListByChildren(
-            $settings['startingpoint'],
-            $settings['recursive']
-        ));
-        return $demand;
+    /**
+     * serialize and save search in session
+     *
+     * @param NewsListActionEvent $event
+     * @param array $search
+     * @return void
+     */
+    protected function saveSearchInSession(NewsListActionEvent $event, array $search): void
+    {
+        $request = $event->getRequest();
+        $frontendUser = $request->getAttribute('frontend.user');
+        $sessionData = serialize($search);
+        $frontendUser->setKey('ses', 'tx_news_filter', $sessionData);
     }
 }
