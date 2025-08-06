@@ -12,7 +12,7 @@ This extension has been sponsored by [University Basel](https://www.unibas.ch)
 ## Requirements
 
 - TYPO3 11.5 or 12.4
-- EXT:news 11.x
+- EXT:news 11.x or 12.x
 
 ## Usage
 
